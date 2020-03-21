@@ -10,10 +10,6 @@ dpl ?= deploy.env
 include $(dpl)
 export $(shell sed 's/=.*//' $(dpl))
 
-# grep the version from the mix file
-export VERSION=$(shell ./version.sh)
-#export VERSION=$(git rev-parse HEAD)
-
 
 # HELP
 # This will output the help for each task
@@ -92,15 +88,11 @@ tag-version: ## Generate container `latest` tag
 
 CMD_REPOLOGIN := "docker login -u $(DOCKER_USER) -p$(DOCKER_PASSWORD)"
 
-repo-login: ## Auto login to AWS-ECR unsing aws-cli
+repo-login: ## Docker login
+	## Auto login to AWS-ECR unsing aws-cli
 	@eval $(CMD_SETUP)
 	@eval $(CMD_REPOLOGIN)
 
-#CMD_SETUP := "sh setup.sh"
-
-#setup:
-#	@eval $(CMD_SETUP)
-
 version: ## Output the current version
-	@echo $(VERSION)
+	@echo $(TAG_VERSION)
 
