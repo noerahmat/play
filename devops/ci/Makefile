@@ -20,7 +20,12 @@ help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
-
+TAG  = $(shell echo "$$(date +%F)-$$(git rev-parse --short HEAD)")
+GIT_COMMIT = $(shell echo "$$(date '+%Y-%m-%d-%H%M%S')-$$(git rev-parse --abbrev-ref HEAD)")
+GIT_BRANCH_NAME = $(shell echo "$$(git rev-parse --abbrev-ref HEAD)")
+GIT_PUSH = $(shell echo 'git add . && git commit -m "tes Makefile commit" && git push origin $$(git rev-parse --abbrev-ref HEAD)')
+#GIT_PUSH = $(shell echo """git add . && git commit -m "$$(date '+%Y-%m-%d-%H%M%S')-$$(git rev-parse --abbrev-ref HEAD)" && git push origin $$(git rev-parse --abbrev-ref HEAD)""")
+#GIT_PUSH = $(shell echo "git add . && git commit -m '$(GIT_COMMIT)' && git push origin $(GIT_BRANCH_NAME)")
 CMD_SETUP := "sh setup.sh"
 CMD_TEST := "sh test.sh"
 
@@ -37,7 +42,7 @@ build-nc: ## Build the container without caching
 run: ## Run container on port configured in `config.env`
 	docker run -d --env-file=./config.env -p=$(PORT):$(PORT) --name="$(APP_NAME)" $(APP_NAME)
 	#docker run -i -t --rm --env-file=./config.env -p=$(PORT):$(PORT) --name="$(APP_NAME)" $(APP_NAME)
-test:## run test container
+test: tag ## run test contaier
 	@eval $(CMD_TEST)
 	#docker run $(DOCKER_REPO)/$(APP_NAME):$(TAG_VERSION) /bin/sh -c "[ -e "/usr/share/nginx/html/index.html" ] && echo 'PASS' || echo 'FAIL'"
 
@@ -49,7 +54,7 @@ stop: ## Stop and remove a running container
 logs: ##get logs from container
 	docker logs $(APP_NAME) -ft --tail=100
 
-release: build-nc publish ## Make a release by building and publishing the `{version}` ans `latest` tagged containers to ECR
+release: build-nc test publish ## Make a release by building and publishing the `{version}` ans `latest` tagged containers to ECR
 
 # Docker publish
 publish: repo-login publish-latest publish-version ## Publish the `{version}` ans `latest` tagged containers to ECR
@@ -95,4 +100,13 @@ repo-login: ## Docker login
 
 version: ## Output the current version
 	@echo $(TAG_VERSION)
+
+testag: ##testagcek
+	@echo $(TAG)
+
+gitpush: ##testagcek
+	@echo $(GIT_PUSH)
+	#@echo $(GIT_COMMIT)
+	#@echo $(GIT_BRANCH_NAME)
+
 
