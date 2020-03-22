@@ -43,6 +43,7 @@ run: ## Run container on port configured in `config.env`
 	docker run -d --env-file=./config.env -p=$(PORT):$(PORT) --name="$(APP_NAME)" $(APP_NAME)
 	#docker run -i -t --rm --env-file=./config.env -p=$(PORT):$(PORT) --name="$(APP_NAME)" $(APP_NAME)
 test: tag ## run test contaier
+	@eval $(CMD_SETUP)
 	@eval $(CMD_TEST)
 	#docker run $(DOCKER_REPO)/$(APP_NAME):$(TAG_VERSION) /bin/sh -c "[ -e "/usr/share/nginx/html/index.html" ] && echo 'PASS' || echo 'FAIL'"
 
