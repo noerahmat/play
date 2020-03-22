@@ -1,6 +1,6 @@
 # import config.
 # You can change the default config with `make cnf="config_special.env" build`
-cnf ?= config.env
+cnf ?= .env
 include $(cnf)
 export $(shell sed 's/=.*//' $(cnf))
 
@@ -21,6 +21,7 @@ help: ## This help.
 
 .DEFAULT_GOAL := help
 TAG  = $(shell echo "$$(date +%F)-$$(git rev-parse --short HEAD)")
+
 GIT_COMMIT = $(shell echo "$$(date '+%Y-%m-%d-%H%M%S')-$$(git rev-parse --abbrev-ref HEAD)")
 GIT_BRANCH_NAME = $(shell echo "$$(git rev-parse --abbrev-ref HEAD)")
 GIT_PUSH = $(shell echo 'git add . && git commit -m "tes Makefile commit" && git push origin $$(git rev-parse --abbrev-ref HEAD)')
@@ -33,14 +34,14 @@ CMD_TEST := "sh test.sh"
 # Build the container
 build: ## Build the container
 	@eval $(CMD_SETUP)
-	docker build -t $(APP_NAME) .
+	docker build --build-arg SVC_PORT=$(APP_PORT) -t $(APP_NAME) -f infra/nginx/Dockerfile .
 
 build-nc: ## Build the container without caching
 	@eval $(CMD_SETUP)
 	docker build --no-cache -t $(APP_NAME) .
 
 run: ## Run container on port configured in `config.env`
-	docker run -d --env-file=./config.env -p=$(PORT):$(PORT) --name="$(APP_NAME)" $(APP_NAME)
+	docker run -d --env-file=./.env -p=$(APP_PORT):$(APP_PORT) --name="$(APP_NAME)" $(APP_NAME)
 	#docker run -i -t --rm --env-file=./config.env -p=$(PORT):$(PORT) --name="$(APP_NAME)" $(APP_NAME)
 test: tag ## run test contaier
 	@eval $(CMD_SETUP)
