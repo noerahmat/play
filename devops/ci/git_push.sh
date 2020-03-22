@@ -1,7 +1,7 @@
 #!/bin/bash
-NOW=$(date +"%m-%d-%Y")
-FILE="backup.$NOW.tar.gz"
-echo "Backing up data to /nas42/backup.$NOW.tar.gz file, please wait..."
+NOW=$(date +"date '+%Y-%m-%d-%H%M%S'")
+#FILE="backup.$NOW.tar.gz"
+#echo "Backing up data to /nas42/backup.$NOW.tar.gz file, please wait..."
 #git add . && git commit -m "$$(date '+%Y-%m-%d-%H%M%S')-$$(git rev-parse --abbrev-ref HEAD)" && git push origin "$$(git rev-parse --abbrev-ref HEAD)"
 #GIT_COMMIT=$(date '+%Y-%m-%d-%H%M%S')-$(git rev-parse --abbrev-ref HEAD)
 #echo "$$GIT_COMMIT"
